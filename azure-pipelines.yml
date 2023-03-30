@@ -1,0 +1,38 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+#trigger:
+ #- master
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.11'
+  displayName: 'Use Python version 3.11'
+
+- script: 
+    python -m pip install --upgrade pip
+    pip install selenium
+    pip install pytest
+
+#    pip install -r requirements.txt
+  displayName: 'Install python packages'
+
+- script:
+   #python tests --doctest-modules --junitxml=junit/test-results.xml
+   python -m pytest tests --junitxml=junit/test-results.xml
+  displayName: 'Execute tests'
+  
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/*.xml'
+  displayName: 'Publish Results'
+
